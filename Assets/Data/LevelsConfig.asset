@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23fb955fe0e04f96832ae4716e2a23bc, type: 3}
+  m_Name: LevelsConfig
+  m_EditorClassIdentifier: 
+  _levelsFileData: {fileID: 4900000, guid: 7e5ea321224fd2a498197bfb835e655c, type: 3}
+  _levelMedals:
+  - _medal: {fileID: 21300000, guid: 13fb047ad226175408b66659e2531183, type: 3}
+    _percentToMedal: {x: 30, y: 59}
+  - _medal: {fileID: 21300000, guid: e81f9ebd41e46d247aa5b1056f41eb22, type: 3}
+    _percentToMedal: {x: 60, y: 89}
+  - _medal: {fileID: 21300000, guid: 1ed9bdf67d4c7c848bd14f4105cd9675, type: 3}
+    _percentToMedal: {x: 90, y: 99}
+  - _medal: {fileID: 21300000, guid: 307c7ad0b07d85c40ae0d3e98699346f, type: 3}
+    _percentToMedal: {x: 100, y: 100}
