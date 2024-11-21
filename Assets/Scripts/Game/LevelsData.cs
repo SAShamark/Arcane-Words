@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Game
 {
@@ -27,6 +28,14 @@ namespace Game
         public void InitializeLevelsGameWords(Dictionary<string, List<GameWord>> levelsGameWords)
         {
             LevelsGameWords = levelsGameWords ?? new Dictionary<string, List<GameWord>>();
+            SortLevelsGameWordsByWordLength();
+        }
+        public void SortLevelsGameWordsByWordLength()
+        {
+            foreach (string key in LevelsGameWords.Keys.ToList())
+            {
+                LevelsGameWords[key] = LevelsGameWords[key].OrderBy(gameWord => gameWord.Word.Length).ToList();
+            }
         }
     }
 }

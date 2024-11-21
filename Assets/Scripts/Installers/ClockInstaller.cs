@@ -1,14 +1,16 @@
 ﻿using Services.Clock;
+using UnityEngine;
 using Zenject;
 
 namespace Installers
 {
-    public class ClockInstaller : Installer<ClockInstaller>
+    public class ClockInstaller : MonoInstaller
     {
+        [SerializeField]
+        private ClockService _clockService;
         public override void InstallBindings()
         {
-            var timerService = new ClockService();
-            Container.BindInterfacesAndSelfTo<ClockService>().FromInstance(timerService).AsSingle();
+            Container.Bind<IClockService>().To<ClockService>().FromInstance(_clockService).AsSingle();
         }
     }
 }

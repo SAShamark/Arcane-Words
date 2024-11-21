@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using Game;
 using Services.Clock;
+using Services.ObjectPooling;
 using TMPro;
 using UI.Screens.Core;
 using UnityEngine;
@@ -28,7 +31,7 @@ namespace UI.Screens.GameMenu
         private Transform _typePaperContent;
 
         [SerializeField]
-        private GameObject _wordPrefab;
+        private WordControl _wordPrefab;
 
         [SerializeField]
         private TMP_Text _wordsCountText;
@@ -39,29 +42,84 @@ namespace UI.Screens.GameMenu
         [SerializeField]
         private TMP_Text _stopwatchText;
 
-        private string _written;
+        private ObjectPool<WordControl> _objectPool;
         private IClockService _clockService;
+        private List<GameWord> _levelWords;
+        public List<WordControl> WordInstances { get; private set; } = new();
+        public event Action<char> OnAddSign;
+        public event Action OnEraseSign;
+        public event Action OnClearWord;
+        public event Action OnExit;
 
         [Inject]
         private void Construct(IClockService clockService)
         {
             _clockService = clockService;
         }
+
+        private void Update()
+        {
+            UpdateStopwatch();
+        }
+
         private void OnDestroy()
         {
-            foreach (var key in _keyButtons)
+            foreach (KeyButton key in _keyButtons)
             {
-                key.OnButtonClicked -= AddSign;
+                key.OnButtonClicked -= ButtonClicked;
             }
 
             _eraseKeyButton.OnButtonClicked -= EraseSign;
+            _eraseKeyButton.OnButtonClicked -= ButtonClicked;
             _clearKeyButton.OnButtonClicked -= ClearWord;
+            _clearKeyButton.OnButtonClicked -= ButtonClicked;
         }
 
-        public void Init(string header)
+        public void Init(string header, List<GameWord> levelWords)
         {
+            _backButton.onClick.AddListener(()=>OnExit?.Invoke());
             _headerText.text = header;
-            _writtenText.text = "";
+            _writtenText.text = string.Empty;
+            _levelWords = levelWords;
+            _objectPool = new ObjectPool<WordControl>(_wordPrefab, 5, _typePaperContent);
+            InitButtons(header);
+            DrawWords(levelWords);
+        }
+
+        private void UpdateStopwatch()
+        {
+            float elapsedTime = _clockService.CalculateElapsedTime(ClockConstants.GAME_TIMER);
+            _stopwatchText.text = _clockService.FormatToTime(elapsedTime);
+        }
+
+        public void UpdateShowedWordCount(int showedCount)
+        {
+            _wordsCountText.text = $"{showedCount}/{_levelWords.Count}";
+        }
+
+        public override void Hide()
+        {
+            base.Hide();
+            foreach (WordControl word in WordInstances)
+            {
+                _objectPool.TurnOffObject(word);
+            }
+
+            WordInstances.Clear();
+        }
+
+        private void DrawWords(List<GameWord> levelWords)
+        {
+            foreach (GameWord levelWord in levelWords)
+            {
+                WordControl wordInstance = _objectPool.GetFreeElement();
+                wordInstance.Init(levelWord.Word);
+                WordInstances.Add(wordInstance);
+            }
+        }
+
+        private void InitButtons(string header)
+        {
             if (_keyButtons.Count != header.Length)
             {
                 Debug.LogWarning("Mismatch between key buttons count and header length.");
@@ -71,35 +129,41 @@ namespace UI.Screens.GameMenu
             {
                 char character = i < header.Length ? header[i] : ' ';
                 _keyButtons[i].Init(character);
-                _keyButtons[i].OnButtonClicked += AddSign;
+                _keyButtons[i].OnButtonClicked += ButtonClicked;
             }
 
             _eraseKeyButton.Init('\0');
             _clearKeyButton.Init('\0');
 
             _eraseKeyButton.OnButtonClicked += EraseSign;
+            _eraseKeyButton.OnButtonClicked += ButtonClicked;
             _clearKeyButton.OnButtonClicked += ClearWord;
+            _clearKeyButton.OnButtonClicked += ButtonClicked;
+        }
+
+        private void ButtonClicked(char sign)
+        {
+            AddSign(sign);
+        }
+
+        public void UpdateWrittenText(string text)
+        {
+            _writtenText.text = text;
         }
 
         private void AddSign(char sign)
         {
-            _written += sign;
-            _writtenText.text = _written;
+            OnAddSign?.Invoke(sign);
         }
 
         private void EraseSign(char _)
         {
-            if (!string.IsNullOrEmpty(_written))
-            {
-                _written = _writtenText.text.Substring(0, _writtenText.text.Length - 1);
-                _writtenText.text = _written;
-            }
+            OnEraseSign?.Invoke();
         }
 
         private void ClearWord(char _)
         {
-            _written = string.Empty;
-            _writtenText.text = _written;
+            OnClearWord?.Invoke();
         }
     }
 }

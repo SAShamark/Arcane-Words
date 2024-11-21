@@ -1,65 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Services.Clock
 {
-    public class ClockService : IClockService
+    public class ClockService : MonoBehaviour, IClockService
     {
-        public class TimerData
+        private StopwatchManager _stopwatchManager;
+        private TimerManager _timerManager;
+
+        private void Awake()
         {
-            public DateTime StartTime { get; set; }
-            public TimeSpan ElapsedTime { get; set; }
-            public bool IsRunning { get; set; }
+            _stopwatchManager = new StopwatchManager();
+            _timerManager = new TimerManager(this);
         }
 
-        public Dictionary<string, TimerData> Timers { get; private set; } = new();
-        
-        public void StartStopwatch(string timerId)
+        public Dictionary<string, StopwatchManager.StopwatchData> Stopwatches => _stopwatchManager.Stopwatches;
+        public void StartStopwatch(string timerId) => _stopwatchManager.StartStopwatch(timerId);
+        public float StopStopwatch(string timerId) => _stopwatchManager.StopStopwatch(timerId);
+        public void ResetStopwatch(string timerId) => _stopwatchManager.ResetStopwatch(timerId);
+        public float CalculateElapsedTime(string timerId) => _stopwatchManager.CalculateElapsedTime(timerId);
+
+        public void StartTimer(string timerId, float durationInSeconds, Action onTimerComplete) =>
+            _timerManager.StartTimer(timerId, durationInSeconds, onTimerComplete);
+        public void StopTimer(string timerId) => _timerManager.StopTimer(timerId);
+        public void StopAllTimers() => _timerManager.StopAllTimers();
+
+        public string FormatToTime(float timeInSeconds, bool includeHours = false)
         {
-            if (!Timers.ContainsKey(timerId))
-            {
-                Timers[timerId] = new TimerData();
-            }
+            int hours = Mathf.FloorToInt(timeInSeconds / ValueConstants.SECONDS_IN_HOUR);
+            int minutes = Mathf.FloorToInt(timeInSeconds % ValueConstants.SECONDS_IN_HOUR / ValueConstants.SECONDS_IN_MINUTE);
+            int seconds = Mathf.FloorToInt(timeInSeconds % ValueConstants.SECONDS_IN_MINUTE);
 
-            TimerData timerData = Timers[timerId];
-            timerData.StartTime = DateTime.Now;
-            timerData.IsRunning = true;
-        }
-
-        public float StopStopwatch(string timerId)
-        {
-            if (!Timers.ContainsKey(timerId) || !Timers[timerId].IsRunning)
-            {
-                throw new InvalidOperationException($"Stopwatch '{timerId}' is not running.");
-            }
-
-            TimerData timerData = Timers[timerId];
-            timerData.IsRunning = false;
-
-            return CalculateElapsedTime(timerId);
-        }
-
-        public void ResetStopwatch(string timerId)
-        {
-            if (Timers.ContainsKey(timerId))
-            {
-                Timers[timerId] = new TimerData { StartTime = DateTime.MinValue, ElapsedTime = TimeSpan.Zero };
-            }
-        }
-
-        public float CalculateElapsedTime(string timerId)
-        {
-            if (!Timers.ContainsKey(timerId))
-            {
-                throw new InvalidOperationException($"Timer '{timerId}' not found.");
-            }
-
-            TimerData timerData = Timers[timerId];
-            DateTime endTime = DateTime.Now;
-            timerData.ElapsedTime = endTime - timerData.StartTime;
-            float elapsedTimeInSeconds =
-                (float)timerData.ElapsedTime.TotalMilliseconds / ValueConstants.MILLISECONDS_IN_SECOND;
-            return elapsedTimeInSeconds;
+            return includeHours ? $"{hours:00}:{minutes:00}:{seconds:00}" : $"{minutes:00}:{seconds:00}";
         }
     }
 }

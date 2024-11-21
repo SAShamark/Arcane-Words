@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Game;
 using UI.Core;
 using UI.Screens.Core;
 using UI.Screens.GameMenu;
@@ -13,11 +15,12 @@ namespace UI.Screens.MainMenu
 
         [SerializeField]
         private LevelButton _levelButton;
+
         private LevelsConfig _levelsConfig;
-        private List<string> _levels;
-        private GameMenuScreen _gameMenu;
-        
+        private GameDataService _gameDataService;
+
         private readonly List<LevelButton> _levelButtons = new();
+        public event Action<int> OnLevelButtonClicked;
 
         private void OnDestroy()
         {
@@ -27,12 +30,11 @@ namespace UI.Screens.MainMenu
             }
         }
 
-        public void Init(LevelsConfig levelsConfig, List<string> levels)
+        public void Init(LevelsConfig levelsConfig, GameDataService gameDataService)
         {
             _levelsConfig = levelsConfig;
-            _levels = levels;
+            _gameDataService = gameDataService;
             Draw();
-            
         }
 
         private void Draw()
@@ -42,9 +44,10 @@ namespace UI.Screens.MainMenu
                 LevelButton button = Instantiate(_levelButton, _levelsContent);
                 _levelButtons.Add(button);
                 button.OnButtonClicked += LevelButtonClicked;
-                if (_levels.Count > index)
+                if (_gameDataService.Levels.Count > index)
                 {
-                    button.Draw(index, true, false, _levelsConfig.LevelMedals[0].Medal, _levels[index], 0);
+                    button.Draw(index, true, false, _levelsConfig.LevelMedals[0].Medal, _gameDataService.Levels[index],
+                        0);
                 }
                 else
                 {
@@ -55,9 +58,7 @@ namespace UI.Screens.MainMenu
 
         private void LevelButtonClicked(int index)
         {
-            UIManager.ScreensManager.ShowScreen(ScreenType.GameMenu);
-            _gameMenu = UIManager.ScreensManager.GetScreen(ScreenType.GameMenu) as GameMenuScreen;
-            _gameMenu?.Init(_levels[index]);
+            OnLevelButtonClicked?.Invoke(index);
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UI.Core;
 using UnityEngine;
@@ -15,88 +14,83 @@ namespace Game
 
         public void Initialize(LevelsConfig levelsConfig)
         {
-            LevelsData levelsData = ParseJsonFile(levelsConfig.LevelsFileData);
-            _levelsData = new LevelsData(levelsData.Levels, levelsData.GameWords);
-            _levelsData.InitializeLevelsGameWords(FilterLevelsGameWords());
+            LevelsData parsedData = ParseLevelsDataFromJson(levelsConfig.LevelsFileData);
+            _levelsData = new LevelsData(parsedData.Levels, parsedData.GameWords);
+            _levelsData.InitializeLevelsGameWords(BuildWordsByLevel());
         }
 
-        private LevelsData ParseJsonFile(TextAsset levelsFileData)
+        private LevelsData ParseLevelsDataFromJson(TextAsset levelsJsonFile)
         {
-            var defaultData = new LevelsData(new List<string>(), new List<GameWord>());
-            LevelsData loadedData = LoadDataFromTextAsset(levelsFileData, defaultData);
-            return loadedData;
+            var emptyLevelsData = new LevelsData();
+            return LoadFromJson(levelsJsonFile, emptyLevelsData);
         }
 
-        private Dictionary<string, List<GameWord>> FilterLevelsGameWords()
+        private Dictionary<string, List<GameWord>> BuildWordsByLevel()
         {
-            var levelsGameWords = new Dictionary<string, List<GameWord>>();
-            foreach (string level in _levelsData.Levels)
+            var wordsGroupedByLevel = new Dictionary<string, List<GameWord>>();
+
+            foreach (string levelName in _levelsData.Levels)
             {
-                List<GameWord> gameWords = FilterWords(level, _levelsData.GameWords);
-                levelsGameWords.Add(level, gameWords);
+                List<GameWord> validWordsForLevel = GetValidWordsForLevel(levelName);
+                wordsGroupedByLevel.Add(levelName, validWordsForLevel);
             }
 
-            return levelsGameWords;
+            return wordsGroupedByLevel;
         }
 
-        private T LoadDataFromTextAsset<T>(TextAsset textAsset, T defaultValue)
+        private T LoadFromJson<T>(TextAsset jsonFile, T fallbackData)
         {
-            if (textAsset == null || string.IsNullOrWhiteSpace(textAsset.text))
-            {
-                return defaultValue;
-            }
+            if (jsonFile == null || string.IsNullOrWhiteSpace(jsonFile.text))
+                return fallbackData;
 
             try
             {
-                return JsonUtility.FromJson<T>(textAsset.text);
+                return JsonUtility.FromJson<T>(jsonFile.text);
             }
-            catch (Exception)
+            catch
             {
-                return defaultValue;
+                return fallbackData;
             }
         }
 
-        private List<GameWord> FilterWords(string levelWord, List<GameWord> words)
+        private List<GameWord> GetValidWordsForLevel(string levelName)
         {
-            Dictionary<char, int> levelWordCounts = CountLetters(levelWord);
+            Dictionary<char, int> levelLetterCounts = CountLetters(levelName);
             var validWords = new List<GameWord>();
+            var seenWords = new HashSet<string>();
 
-            foreach (GameWord word in words)
+            foreach (GameWord gameWord in _levelsData.GameWords)
             {
-                Dictionary<char, int> wordCounts = CountLetters(word.Word);
-
-                if (CanFormWord(wordCounts, levelWordCounts))
+                if (CanBuildWordFromLetters(gameWord.Word, levelLetterCounts) && seenWords.Add(gameWord.Word))
                 {
-                    validWords.Add(word);
+                    validWords.Add(gameWord);
                 }
             }
 
             return validWords;
         }
 
-        private Dictionary<char, int> CountLetters(string word)
+        private Dictionary<char, int> CountLetters(string text)
         {
             var letterCounts = new Dictionary<char, int>();
 
-            foreach (char letter in word)
+            foreach (char letter in text)
             {
                 if (!letterCounts.TryAdd(letter, 1))
-                {
                     letterCounts[letter]++;
-                }
             }
 
             return letterCounts;
         }
 
-        private bool CanFormWord(Dictionary<char, int> wordCounts, Dictionary<char, int> levelWordCounts)
+        private bool CanBuildWordFromLetters(string word, Dictionary<char, int> availableLetters)
         {
-            foreach (KeyValuePair<char, int> kvp in wordCounts)
+            Dictionary<char, int> wordLetterCounts = CountLetters(word);
+
+            foreach (KeyValuePair<char, int> letter in wordLetterCounts)
             {
-                if (!levelWordCounts.ContainsKey(kvp.Key) || levelWordCounts[kvp.Key] < kvp.Value)
-                {
+                if (!availableLetters.TryGetValue(letter.Key, out int availableCount) || availableCount < letter.Value)
                     return false;
-                }
             }
 
             return true;

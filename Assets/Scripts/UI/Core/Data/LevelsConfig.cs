@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,19 +20,5 @@ namespace UI.Core
         public int LevelsOnPage => _levelsOnPage;
 
         public List<LevelMedals> LevelMedals => _levelMedals;
-    }
-
-    [Serializable]
-    public class LevelMedals
-    {
-        [SerializeField]
-        private Sprite _medal;
-
-        [SerializeField]
-        private Vector2 _percentToMedal;
-
-        public Sprite Medal => _medal;
-
-        public Vector2 PercentToMedal => _percentToMedal;
     }
 }

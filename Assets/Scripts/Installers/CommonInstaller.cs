@@ -8,7 +8,6 @@ namespace Installers
         {
             StorageInstaller.Install(Container);
             CurrencyInstaller.Install(Container);
-            ClockInstaller.Install(Container);
         }
     }
 }
