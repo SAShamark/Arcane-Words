@@ -4,14 +4,14 @@ using Services.Storage;
 using UI.Core.Data;
 using UnityEngine;
 
-namespace Game
+namespace Game.Data
 {
-    public class GameDataService
+    public class GameDataManager
     {
         private LevelsData _levelsData;
         private LevelsDataParser _levelsDataParser;
         private WordBuilder _wordBuilder;
-        
+
         private readonly IStorageService _storageService;
         private readonly LevelsConfig _levelsConfig;
 
@@ -22,7 +22,7 @@ namespace Game
         public List<GameWord> AllGameWords => _levelsData.GameWords;
         public Dictionary<string, List<GameWord>> LevelsGameWords => _levelsData.LevelsGameWords;
 
-        public GameDataService(GamePlayConfig gamePlayConfig, LevelsConfig levelsConfig, IStorageService storageService)
+        public GameDataManager(GamePlayConfig gamePlayConfig, LevelsConfig levelsConfig, IStorageService storageService)
         {
             GamePlayConfig = gamePlayConfig;
             _storageService = storageService;
@@ -31,7 +31,6 @@ namespace Game
 
         public void Initialize()
         {
-            
             _levelsDataParser = new LevelsDataParser();
 
             LevelsData parsedData = _levelsDataParser.ParseLevelsDataFromJson(_levelsConfig.LevelsFileData);
@@ -48,7 +47,7 @@ namespace Game
         {
             foreach (string level in _levelsData.Levels.Where(level => !LevelsProgressData.ContainsKey(level)))
             {
-                var levelProgressData = new LevelProgressData(level, new List<string>(), 0);
+                var levelProgressData = new LevelProgressData(level, new List<string>(), new List<string>(), 0);
                 LevelsProgressData[level] = levelProgressData;
             }
 

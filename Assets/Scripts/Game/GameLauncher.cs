@@ -1,45 +1,41 @@
 ﻿using System;
+using Game.Data;
 using Services.Clock;
-using Services.Storage;
+using Services.Currencies;
 using UI.Core;
 using UI.Screens.Core;
 using UI.Screens.GameMenu;
 
 namespace Game
 {
-    public sealed class GameLauncher: IDisposable
+    public sealed class GameLauncher : IDisposable
     {
         private GameMenuScreen _gameMenu;
         private GameController _gameController;
-        
+
         private readonly IUIManager _uiManager;
         private readonly IClockService _clockService;
-        private readonly IStorageService _storageService;
-        private readonly GameDataService _gameDataService;
-        
+        private readonly CurrencyService _currencyService;
+        private readonly GameDataManager _gameDataManager;
 
-        public GameLauncher(IUIManager uiManager, IClockService clockService, IStorageService storageService,
-            GameDataService gameDataService)
+
+        public GameLauncher(IUIManager uiManager, IClockService clockService,
+            GameDataManager gameDataManager, CurrencyService currencyService)
         {
             _uiManager = uiManager;
-            _storageService = storageService;
-            _gameDataService = gameDataService;
+            _gameDataManager = gameDataManager;
             _clockService = clockService;
-
-            Init();
-        }
-
-        private void Init()
-        {
-            _gameController = new GameController(_clockService);
+            _currencyService = currencyService;
         }
 
         public void LaunchGame(int levelIndex)
         {
             _uiManager.ScreensManager.ShowScreen(ScreenType.GameMenu);
             _gameMenu = _uiManager.ScreensManager.GetScreen(ScreenType.GameMenu) as GameMenuScreen;
-            string level = _gameDataService.Levels[levelIndex];
-            _gameController.StartGame(_gameMenu, _gameDataService, level);
+            string level = _gameDataManager.Levels[levelIndex];
+
+            _gameController = new GameController(_clockService, _currencyService, _uiManager);
+            _gameController.StartGame(_gameMenu, _gameDataManager, level);
         }
 
         public void Dispose()

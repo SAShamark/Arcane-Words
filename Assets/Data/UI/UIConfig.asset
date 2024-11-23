@@ -19,4 +19,7 @@ MonoBehaviour:
   - _screenType: 2
     _template: {fileID: -176352370753765060, guid: 5042404b65e681b4ea153f79170eb424, type: 3}
     _isAddToStack: 1
-  _popupModels: []
+  _popupModels:
+  - _popupType: 1
+    _template: {fileID: -6386118844527763297, guid: 0a4c3defff3f7d1488750a582aa9b4f9, type: 3}
+    _useTotalFader: 1

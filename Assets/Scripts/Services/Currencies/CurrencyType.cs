@@ -4,6 +4,6 @@
     {
         None = 0,
         Coin = 1,
-        Bulb = 2,
+        Hint = 2,
     }
 }

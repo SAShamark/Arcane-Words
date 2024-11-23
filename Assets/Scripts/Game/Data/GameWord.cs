@@ -1,6 +1,6 @@
 using System;
 
-namespace Game
+namespace Game.Data
 {
     [Serializable]
     public class GameWord

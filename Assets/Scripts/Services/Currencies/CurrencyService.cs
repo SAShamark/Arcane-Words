@@ -18,14 +18,14 @@ namespace Services.Currencies
             CurrencyCollection = currencyCollection;
         }
         
-        public void Init()
+        public void Init(Dictionary<string, int> defaultValues)
         {
-            AddAllCurrencyBanks();
+            AddAllCurrencyBanks(defaultValues);
         }
 
-        private void AddAllCurrencyBanks()
+        private void AddAllCurrencyBanks(Dictionary<string, int> defaultValues)
         {
-            var currencies = _storageService.LoadData(StorageConstants.CURRENCIES, new Dictionary<string, int>());
+            var currencies = _storageService.LoadData(StorageConstants.CURRENCIES, defaultValues);
             foreach (CurrencyType currencyType in Enum.GetValues(typeof(CurrencyType)))
             {
                 int initialCurrency = currencies.GetValueOrDefault(currencyType.ToString(), 0);

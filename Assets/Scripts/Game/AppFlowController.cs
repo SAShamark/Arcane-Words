@@ -1,4 +1,6 @@
+using Game.Data;
 using Services.Clock;
+using Services.Currencies;
 using Services.Storage;
 using UI.Core;
 using UI.Core.Data;
@@ -11,25 +13,27 @@ namespace Game
 {
     public sealed class AppFlowController : MonoBehaviour
     {
-        [SerializeField]
         private LevelsConfig _levelsConfig;
-
-        [SerializeField]
         private GamePlayConfig _gamePlayConfig;
 
         private IUIManager _uiManager;
         private IClockService _clockService;
         private IStorageService _storageService;
-        private GameDataService _gameDataService;
+        private CurrencyService _currencyService;
+        private GameDataManager _gameDataManager;
         private GameLauncher _gameLauncher;
         private MainMenuScreen _mainMenu;
 
         [Inject]
-        private void Construct(IUIManager uiManager, IClockService clockService, IStorageService storageService)
+        private void Construct(IUIManager uiManager, IClockService clockService, IStorageService storageService,
+            CurrencyService currencyService, LevelsConfig levelsConfig, GamePlayConfig gamePlayConfig)
         {
             _uiManager = uiManager;
             _clockService = clockService;
             _storageService = storageService;
+            _currencyService = currencyService;
+            _levelsConfig = levelsConfig;
+            _gamePlayConfig = gamePlayConfig;
         }
 
         private void Start()
@@ -37,7 +41,7 @@ namespace Game
             InitializeGameDataService();
             InitializeMainMenu();
 
-            _gameLauncher = new GameLauncher(_uiManager, _clockService, _storageService, _gameDataService);
+            _gameLauncher = new GameLauncher(_uiManager, _clockService, _gameDataManager,_currencyService);
         }
 
         private void OnDestroy()
@@ -52,16 +56,16 @@ namespace Game
             _mainMenu = _uiManager.ScreensManager.GetScreen(ScreenType.MainMenu) as MainMenuScreen;
             if (_mainMenu != null)
             {
-                _mainMenu.Init(_levelsConfig, _gameDataService);
+                _mainMenu.Init(_levelsConfig, _gameDataManager);
                 _mainMenu.OnLevelButtonClicked += LevelButtonClicked;
             }
         }
 
         private void InitializeGameDataService()
         {
-            var gameDataService = new GameDataService(_gamePlayConfig, _levelsConfig, _storageService);
+            var gameDataService = new GameDataManager(_gamePlayConfig, _levelsConfig, _storageService);
             gameDataService.Initialize();
-            _gameDataService = gameDataService;
+            _gameDataManager = gameDataService;
         }
 
         private void LevelButtonClicked(int index)

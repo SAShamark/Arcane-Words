@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Game
+namespace Game.Data
 {
     [Serializable]
     public class LevelsData
