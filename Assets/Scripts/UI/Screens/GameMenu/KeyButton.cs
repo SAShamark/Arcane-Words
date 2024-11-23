@@ -32,7 +32,6 @@ namespace UI.Screens.GameMenu
 
         private void ButtonClicked()
         {
-            _button.interactable = false;
             OnButtonClicked?.Invoke(this);
         }
     }

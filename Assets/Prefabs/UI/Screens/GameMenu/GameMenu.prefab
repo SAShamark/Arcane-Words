@@ -1567,8 +1567,8 @@ MonoBehaviour:
   - {fileID: 7307675326513670106}
   - {fileID: 2102135535022034554}
   - {fileID: 8585254754010271197}
-  _clearKeyButton: {fileID: 6362467802805011662}
-  _eraseKeyButton: {fileID: 3909718144637446409}
+  _clearKeyButton: {fileID: 3909718144637446409}
+  _eraseKeyButton: {fileID: 6362467802805011662}
   _writtenText: {fileID: 2091291265003539191}
 --- !u!1 &4736629546026818240
 GameObject:

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UI.Screens.GameMenu
 {
@@ -20,7 +20,7 @@ namespace UI.Screens.GameMenu
         [SerializeField]
         private TMP_Text _writtenText;
 
-        private readonly List<Button> _pressedButtons = new();
+        private readonly List<KeyButton> _pressedButtons = new();
         public event Action<char> OnAddSign;
         public event Action OnEraseSign;
         public event Action OnClearWord;
@@ -39,7 +39,7 @@ namespace UI.Screens.GameMenu
         {
             foreach (KeyButton button in _keyButtons)
             {
-                button.OnButtonClicked += ButtonClicked;
+                button.OnButtonClicked += SignButtonClicked;
             }
 
             _eraseKeyButton.OnButtonClicked += EraseSign;
@@ -50,7 +50,7 @@ namespace UI.Screens.GameMenu
         {
             foreach (KeyButton button in _keyButtons)
             {
-                button.OnButtonClicked -= ButtonClicked;
+                button.OnButtonClicked -= SignButtonClicked;
             }
 
             _eraseKeyButton.OnButtonClicked -= EraseSign;
@@ -83,17 +83,25 @@ namespace UI.Screens.GameMenu
 
         public void ActivatePressedButtons()
         {
-            foreach (var button in _pressedButtons)
+            foreach (KeyButton button in _pressedButtons)
             {
-                button.interactable = true;
+                button.Button.interactable = true;
             }
 
             _pressedButtons.Clear();
         }
 
-        private void ButtonClicked(KeyButton button)
+        private void ActivatePressedButton()
         {
-            _pressedButtons.Add(button.Button);
+            KeyButton keyButton = _pressedButtons.Last();
+            keyButton.Button.interactable = true;
+            _pressedButtons.Remove(keyButton);
+        }
+
+        private void SignButtonClicked(KeyButton button)
+        {
+            button.Button.interactable = false;
+            _pressedButtons.Add(button);
             AddSign(button.Sign);
         }
 
@@ -104,13 +112,13 @@ namespace UI.Screens.GameMenu
 
         private void EraseSign(KeyButton button)
         {
-            _pressedButtons.Add(button.Button);
+            ActivatePressedButton();
             OnEraseSign?.Invoke();
         }
 
         private void ClearWord(KeyButton button)
         {
-            _pressedButtons.Add(button.Button);
+            ActivatePressedButtons();
             OnClearWord?.Invoke();
         }
     }
