@@ -1,4 +1,5 @@
-﻿using UI.Popups.Core;
+﻿using UI.Core.Data;
+using UI.Popups.Core;
 using UI.Screens.Core;
 using UnityEngine;
 using Zenject;

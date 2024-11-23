@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UI.Core;
+using UI.Core.Data;
 using UnityEngine;
 
 namespace UI.Screens.Core

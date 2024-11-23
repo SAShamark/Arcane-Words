@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bc745375c9da4634c821c6922d754125, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 974c630aee3803946919bc07aa55cf91, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -345,7 +345,7 @@ MonoBehaviour:
   _canvas: {fileID: 7766138928538117598}
   _backButton: {fileID: 0}
   _levelsContent: {fileID: 2092877340718225510}
-  _levelButton: {fileID: 266429750315020998, guid: 0751a657d12b5f1418e300bd599ba104, type: 3}
+  _levelButtonPrefab: {fileID: 266429750315020998, guid: 0751a657d12b5f1418e300bd599ba104, type: 3}
 --- !u!223 &7766138928538117598
 Canvas:
   m_ObjectHideFlags: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!1 &2092877340718225511
 GameObject:
   m_ObjectHideFlags: 0

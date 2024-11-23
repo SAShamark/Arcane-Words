@@ -2,7 +2,7 @@
 using UI.Screens.Core;
 using UnityEngine;
 
-namespace UI.Core
+namespace UI.Core.Data
 {
     [CreateAssetMenu(fileName = "UIConfig", menuName = "ScriptableObjects/UI/UI config", order = 1)]
     public class WindowsConfig : ScriptableObject

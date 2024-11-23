@@ -13,21 +13,27 @@ namespace UI.Screens.GameMenu
         [SerializeField]
         private Button _button;
 
-        private char _sign;
-        public event Action<char> OnButtonClicked;
-        
+        public Button Button => _button;
+
+        public char Sign { get; private set; }
+
+        public event Action<KeyButton> OnButtonClicked;
+
         public void Init(char sign)
         {
             if (sign != '\0')
             {
-                _sign = sign;
+                Sign = sign;
                 _keyText.text = sign.ToString();
             }
+
             _button.onClick.AddListener(ButtonClicked);
         }
+
         private void ButtonClicked()
         {
-            OnButtonClicked?.Invoke(_sign);
+            _button.interactable = false;
+            OnButtonClicked?.Invoke(this);
         }
     }
 }

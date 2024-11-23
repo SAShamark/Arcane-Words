@@ -1,4 +1,5 @@
 ﻿using System;
+using UI.Core.Data;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;

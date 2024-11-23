@@ -25,7 +25,7 @@ namespace Game
             LevelsGameWords = new Dictionary<string, List<GameWord>>();
         }
 
-        public void InitializeLevelsGameWords(Dictionary<string, List<GameWord>> levelsGameWords)
+        public void InitLevelsGameWords(Dictionary<string, List<GameWord>> levelsGameWords)
         {
             LevelsGameWords = levelsGameWords ?? new Dictionary<string, List<GameWord>>();
             SortLevelsGameWordsByWordLength();

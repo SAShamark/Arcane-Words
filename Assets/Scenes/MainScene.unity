@@ -413,6 +413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelsConfig: {fileID: 11400000, guid: a02602358bb20f541abf514334d8604f, type: 2}
+  _gamePlayConfig: {fileID: 11400000, guid: 3a4518d2f278bce44aa0a7cc98ee07bc, type: 2}
 --- !u!1 &1976224178
 GameObject:
   m_ObjectHideFlags: 0

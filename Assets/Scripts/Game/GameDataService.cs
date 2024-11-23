@@ -1,5 +1,7 @@
 using System.Collections.Generic;
-using UI.Core;
+using System.Linq;
+using Services.Storage;
+using UI.Core.Data;
 using UnityEngine;
 
 namespace Game
@@ -7,93 +9,70 @@ namespace Game
     public class GameDataService
     {
         private LevelsData _levelsData;
+        private LevelsDataParser _levelsDataParser;
+        private WordBuilder _wordBuilder;
+        
+        private readonly IStorageService _storageService;
+        private readonly LevelsConfig _levelsConfig;
+
+        public GamePlayConfig GamePlayConfig { get; private set; }
 
         public List<string> Levels => _levelsData.Levels;
+        public Dictionary<string, LevelProgressData> LevelsProgressData { get; private set; } = new();
         public List<GameWord> AllGameWords => _levelsData.GameWords;
         public Dictionary<string, List<GameWord>> LevelsGameWords => _levelsData.LevelsGameWords;
 
-        public void Initialize(LevelsConfig levelsConfig)
+        public GameDataService(GamePlayConfig gamePlayConfig, LevelsConfig levelsConfig, IStorageService storageService)
         {
-            LevelsData parsedData = ParseLevelsDataFromJson(levelsConfig.LevelsFileData);
+            GamePlayConfig = gamePlayConfig;
+            _storageService = storageService;
+            _levelsConfig = levelsConfig;
+        }
+
+        public void Initialize()
+        {
+            
+            _levelsDataParser = new LevelsDataParser();
+
+            LevelsData parsedData = _levelsDataParser.ParseLevelsDataFromJson(_levelsConfig.LevelsFileData);
             _levelsData = new LevelsData(parsedData.Levels, parsedData.GameWords);
-            _levelsData.InitializeLevelsGameWords(BuildWordsByLevel());
+
+            _wordBuilder = new WordBuilder(_levelsData.GameWords);
+            Dictionary<string, List<GameWord>> wordsByLevel = _wordBuilder.BuildWordsByLevel(_levelsData.Levels);
+            _levelsData.InitLevelsGameWords(wordsByLevel);
+
+            InitLevelsProgressData();
         }
 
-        private LevelsData ParseLevelsDataFromJson(TextAsset levelsJsonFile)
+        private void InitLevelsProgressData()
         {
-            var emptyLevelsData = new LevelsData();
-            return LoadFromJson(levelsJsonFile, emptyLevelsData);
+            foreach (string level in _levelsData.Levels.Where(level => !LevelsProgressData.ContainsKey(level)))
+            {
+                var levelProgressData = new LevelProgressData(level, new List<string>(), 0);
+                LevelsProgressData[level] = levelProgressData;
+            }
+
+            LevelsProgressData = _storageService.LoadData(StorageConstants.GAME_PROGRESS, LevelsProgressData);
         }
 
-        private Dictionary<string, List<GameWord>> BuildWordsByLevel()
+        public void UpdateLevelsProgressData(LevelProgressData levelProgress)
         {
-            var wordsGroupedByLevel = new Dictionary<string, List<GameWord>>();
-
-            foreach (string levelName in _levelsData.Levels)
-            {
-                List<GameWord> validWordsForLevel = GetValidWordsForLevel(levelName);
-                wordsGroupedByLevel.Add(levelName, validWordsForLevel);
-            }
-
-            return wordsGroupedByLevel;
+            LevelsProgressData[levelProgress.Word] = levelProgress;
+            _storageService.SaveData(StorageConstants.GAME_PROGRESS, LevelsProgressData);
         }
 
-        private T LoadFromJson<T>(TextAsset jsonFile, T fallbackData)
+        public int CalculateLevelProgress(string level)
         {
-            if (jsonFile == null || string.IsNullOrWhiteSpace(jsonFile.text))
-                return fallbackData;
+            float totalWords = LevelsGameWords[level].Count;
+            float unlockedWords = LevelsProgressData[level].UnlockedWords.Count;
 
-            try
+            if (totalWords == 0)
             {
-                return JsonUtility.FromJson<T>(jsonFile.text);
-            }
-            catch
-            {
-                return fallbackData;
-            }
-        }
-
-        private List<GameWord> GetValidWordsForLevel(string levelName)
-        {
-            Dictionary<char, int> levelLetterCounts = CountLetters(levelName);
-            var validWords = new List<GameWord>();
-            var seenWords = new HashSet<string>();
-
-            foreach (GameWord gameWord in _levelsData.GameWords)
-            {
-                if (CanBuildWordFromLetters(gameWord.Word, levelLetterCounts) && seenWords.Add(gameWord.Word))
-                {
-                    validWords.Add(gameWord);
-                }
+                Debug.LogError($"Level {level} has no words.");
+                return 0;
             }
 
-            return validWords;
-        }
-
-        private Dictionary<char, int> CountLetters(string text)
-        {
-            var letterCounts = new Dictionary<char, int>();
-
-            foreach (char letter in text)
-            {
-                if (!letterCounts.TryAdd(letter, 1))
-                    letterCounts[letter]++;
-            }
-
-            return letterCounts;
-        }
-
-        private bool CanBuildWordFromLetters(string word, Dictionary<char, int> availableLetters)
-        {
-            Dictionary<char, int> wordLetterCounts = CountLetters(word);
-
-            foreach (KeyValuePair<char, int> letter in wordLetterCounts)
-            {
-                if (!availableLetters.TryGetValue(letter.Key, out int availableCount) || availableCount < letter.Value)
-                    return false;
-            }
-
-            return true;
+            return Mathf.RoundToInt(unlockedWords / totalWords * 100);
         }
     }
 }

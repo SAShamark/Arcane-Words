@@ -19,18 +19,19 @@ namespace UI.Screens.GameMenu
         {
             GameObject = gameObject;
             Word = word;
-            Draw();
+            DrawLockedWord();
         }
 
-        private void Draw()
+        private void DrawLockedWord()
         {
             _text.text = new string('-', Word.Length);
+            IsUnlocked = false;
         }
 
         public void UnlockWord()
         {
-            IsUnlocked = true;
             _text.text = Word;
+            IsUnlocked = true;
         }
 
         public void Reset()

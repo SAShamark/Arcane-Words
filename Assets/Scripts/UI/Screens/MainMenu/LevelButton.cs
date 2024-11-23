@@ -17,12 +17,6 @@ namespace UI.Screens.MainMenu
         private GameObject _unlockedLevel;
 
         [SerializeField]
-        private GameObject _levelInProgress;
-
-        [SerializeField]
-        private GameObject _levelCompleted;
-
-        [SerializeField]
         private TMP_Text _levelNameText;
 
         [SerializeField]
@@ -35,22 +29,40 @@ namespace UI.Screens.MainMenu
 
         public event Action<int> OnButtonClicked;
 
-        public void Draw(int index, bool isUnlocked, bool isCompleted, Sprite progressSprite = null, string name = "",
-            int progress = 0)
+        public void Draw(int index, bool isUnlocked, bool isCompleted, string name = "",
+            int progress = 0, Sprite progressSprite = null)
         {
             _index = index;
             _button.onClick.AddListener(ButtonClicked);
+            _levelNameText.text = name;
+            UpdateVisual(isUnlocked, isCompleted, progress, progressSprite);
+        }
+
+        public void UpdateVisual(bool isUnlocked, bool isCompleted, int progress, Sprite progressSprite)
+        {
             _lockedLevel.SetActive(!isUnlocked);
             _unlockedLevel.SetActive(isUnlocked);
-            _levelCompleted.SetActive(isCompleted);
-            _levelInProgress.SetActive(!isCompleted && isUnlocked);
-
-            _levelNameText.text = name;
             _progressText.text = $"{progress}%";
 
-            if (isUnlocked && !isCompleted)
+            if (isCompleted)
             {
-                _progressImage.sprite = progressSprite;
+                _progressImage.gameObject.SetActive(true);
+                _progressText.gameObject.SetActive(false);
+                return;
+            }
+
+            if (isUnlocked)
+            {
+                if (progressSprite == null)
+                {
+                    _progressImage.gameObject.SetActive(false);
+                    _progressText.gameObject.SetActive(true);
+                }
+                else
+                {
+                    _progressImage.gameObject.SetActive(true);
+                    _progressImage.sprite = progressSprite;
+                }
             }
         }
 

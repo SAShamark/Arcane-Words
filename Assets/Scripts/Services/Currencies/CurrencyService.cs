@@ -17,9 +17,7 @@ namespace Services.Currencies
             _storageService = storageService;
             CurrencyCollection = currencyCollection;
         }
-
-        public int Priority => 1;
-
+        
         public void Init()
         {
             AddAllCurrencyBanks();

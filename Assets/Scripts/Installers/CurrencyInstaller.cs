@@ -24,6 +24,7 @@ namespace Installers
         private void BindCurrencyService()
         {
             var currencyService = new CurrencyService(_storageService, _currencyCollection);
+            currencyService.Init();
             Container.Bind<CurrencyService>().FromInstance(currencyService).AsSingle();
         }
     }
