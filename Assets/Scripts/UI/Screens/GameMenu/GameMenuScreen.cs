@@ -78,7 +78,6 @@ namespace UI.Screens.GameMenu
             _hintCountText.text = hintCount.ToString();
 
             _typePaperPanel.Init(_levelWords, _wordsWithHint, unlockedWords);
-            _typePaperPanel.OnShowHint += HandleHint;
             _typeWriterPanel.Init(header);
         }
 
@@ -104,6 +103,7 @@ namespace UI.Screens.GameMenu
             _typeWriterPanel.OnAddSign += AddSign;
             _typeWriterPanel.OnEraseSign += EraseSign;
             _typeWriterPanel.OnClearWord += ClearWord;
+            _typePaperPanel.OnShowHint += HandleHint;
         }
 
         private void Unsubscribe()
@@ -114,6 +114,7 @@ namespace UI.Screens.GameMenu
             _typeWriterPanel.OnAddSign -= AddSign;
             _typeWriterPanel.OnEraseSign -= EraseSign;
             _typeWriterPanel.OnClearWord -= ClearWord;
+            _typePaperPanel.OnShowHint -= HandleHint;
             _typePaperPanel.Unsubscribe();
         }
 
@@ -123,7 +124,7 @@ namespace UI.Screens.GameMenu
             _stopwatchText.text = _clockService.FormatToTime(elapsedTime);
         }
 
-
+        public void ChangeHintButtonActivity(bool isActive) => _hintButton.interactable = isActive;
         private void AddSign(char sign) => OnAddSign?.Invoke(sign);
 
         private void EraseSign() => OnEraseSign?.Invoke();

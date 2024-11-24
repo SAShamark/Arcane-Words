@@ -10,7 +10,7 @@ namespace Game.Data
     {
         private LevelsData _levelsData;
         private LevelsDataParser _levelsDataParser;
-        private WordBuilder _wordBuilder;
+        private WordsBuilder _wordsBuilder;
 
         private readonly IStorageService _storageService;
         private readonly LevelsConfig _levelsConfig;
@@ -36,8 +36,8 @@ namespace Game.Data
             LevelsData parsedData = _levelsDataParser.ParseLevelsDataFromJson(_levelsConfig.LevelsFileData);
             _levelsData = new LevelsData(parsedData.Levels, parsedData.GameWords);
 
-            _wordBuilder = new WordBuilder(_levelsData.GameWords);
-            Dictionary<string, List<GameWord>> wordsByLevel = _wordBuilder.BuildWordsByLevel(_levelsData.Levels);
+            _wordsBuilder = new WordsBuilder(_levelsData.GameWords);
+            Dictionary<string, List<GameWord>> wordsByLevel = _wordsBuilder.BuildWordsByLevel(_levelsData.Levels);
             _levelsData.InitLevelsGameWords(wordsByLevel);
 
             InitLevelsProgressData();

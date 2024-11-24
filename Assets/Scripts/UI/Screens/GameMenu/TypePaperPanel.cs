@@ -84,7 +84,7 @@ namespace UI.Screens.GameMenu
             {
                 _objectPool.TurnOffObject(word);
             }
-
+            Unsubscribe();
             WordInstances.Clear();
         }
 

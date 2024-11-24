@@ -3,11 +3,11 @@ using Game.Data;
 
 namespace Game
 {
-    public class WordBuilder
+    public class WordsBuilder
     {
         private readonly List<GameWord> _gameWords;
 
-        public WordBuilder(List<GameWord> gameWords)
+        public WordsBuilder(List<GameWord> gameWords)
         {
             _gameWords = gameWords;
         }

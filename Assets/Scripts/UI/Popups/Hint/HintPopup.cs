@@ -40,8 +40,9 @@ namespace UI.Popups.Hint
         private CurrencyService _currencyService;
         private int _cost;
         private string _word;
-        private bool _isUnlocked;
         private string _hintDescription;
+        private bool _isHintUnlocked;
+        private bool _isWordUnlocked;
 
         public event Action<string> OnHintUsed;
 
@@ -51,28 +52,41 @@ namespace UI.Popups.Hint
             _currencyService = currencyService;
         }
 
-        public void Initialize(string word, string hintDescription, bool isUnlocked, int cost)
+        public void Initialize(string word, string hintDescription, bool isHintUnlocked, bool isWordUnlocked, int cost)
         {
             _cost = cost;
             _word = word;
             _hintDescription = hintDescription;
-            _isUnlocked = isUnlocked;
+            _isHintUnlocked = isHintUnlocked;
+            _isWordUnlocked = isWordUnlocked;
 
-            _acceptButton.onClick.AddListener(AcceptHint);
+            _acceptButton.onClick.AddListener(Accept);
             _acceptButton.interactable = true;
             Draw();
         }
 
         private void Draw()
         {
-            _headerText.text = _isUnlocked ? _word : new string('+', _word.Length);
-            _bulbGameObject.SetActive(!_isUnlocked);
-            _acceptText.text = _isUnlocked ? _acceptString : _cost.ToString();
-            _acceptText.color = _isUnlocked ? _acceptTextColorWhenUnlocked : _acceptTextColorWhenLocked;
+            _headerText.text = _isWordUnlocked ? _word : new string('+', _word.Length);
+            _blurGameObject.SetActive(!_isHintUnlocked);
+            _bulbGameObject.SetActive(!_isHintUnlocked);
+            _acceptText.text = _isHintUnlocked ? _acceptString : _cost.ToString();
+            _acceptText.color = _isHintUnlocked ? _acceptTextColorWhenUnlocked : _acceptTextColorWhenLocked;
             _mainText.text = _hintDescription;
         }
 
-        private void AcceptHint()
+        private void Accept()
+        {
+            if (_isHintUnlocked)
+            {
+                CloseTrigger();
+                return;
+            }
+
+            TryUnlockHint();
+        }
+
+        private bool TryUnlockHint()
         {
             IBank hintCurrency = _currencyService.GetCurrencyByType(CurrencyType.Hint);
             if (hintCurrency.Currency > _cost)
@@ -81,7 +95,10 @@ namespace UI.Popups.Hint
                 _blurGameObject.SetActive(false);
                 _acceptButton.interactable = false;
                 OnHintUsed?.Invoke(_word);
+                return true;
             }
+
+            return false;
         }
     }
 }
