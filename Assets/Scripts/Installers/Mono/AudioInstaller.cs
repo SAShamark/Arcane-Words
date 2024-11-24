@@ -2,7 +2,7 @@ using Audio;
 using UnityEngine;
 using Zenject;
 
-namespace Installers
+namespace Installers.Mono
 {
     public class AudioInstaller : MonoInstaller
     {

@@ -1,6 +1,6 @@
 ﻿using Zenject;
 
-namespace Installers
+namespace Installers.Mono
 {
     public class CommonInstaller : MonoInstaller
     {

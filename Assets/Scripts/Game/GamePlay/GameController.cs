@@ -12,6 +12,7 @@ namespace Game.GamePlay
     {
         private string _levelWord;
         private float _elapsedTime;
+        private bool _isLevelCompleted;
         private GameMenuScreen _gameMenuScreen;
         private GameDataManager _gameDataManager;
         private List<GameWord> _levelWords;
@@ -23,6 +24,7 @@ namespace Game.GamePlay
         private readonly IClockService _clockService;
         private readonly CurrencyService _currencyService;
         private readonly IUIManager _uiManager;
+        public event Action OnLevelCompleted;
 
         public GameController(IClockService clockService, CurrencyService currencyService, IUIManager uiManager)
         {
@@ -41,12 +43,16 @@ namespace Game.GamePlay
             LevelProgressData levelProgressData = _gameDataManager.LevelsProgressData[level];
             _elapsedTime = levelProgressData.GameTime;
             _unlockedWords = levelProgressData.UnlockedWords;
+            _isLevelCompleted = levelProgressData.IsLevelCompleted;
 
             InitGameWordBuilder();
             InitHintManager(levelProgressData);
             InitializeGameScreen(levelProgressData);
             Subscribe();
-            _clockService.StartStopwatch(ClockConstants.GAME_TIMER);
+            if (!_isLevelCompleted)
+            {
+                _clockService.StartStopwatch(ClockConstants.GAME_TIMER);
+            }
         }
 
         private void InitHintManager(LevelProgressData levelProgressData)
@@ -72,7 +78,7 @@ namespace Game.GamePlay
                 int hintCount = _currencyService.GetCurrencyByType(CurrencyType.Hint).Currency;
 
                 _gameMenuScreen.Init(_levelWord, _levelWords, _unlockedWords,
-                    levelProgressData.WordsWithHint, _elapsedTime, hintCount);
+                    levelProgressData.WordsWithHint, _elapsedTime, hintCount, levelProgressData.IsLevelCompleted);
                 _gameMenuScreen.UpdateShowedWordCount(levelProgressData.UnlockedWords.Count);
             }
         }
@@ -80,15 +86,33 @@ namespace Game.GamePlay
         private void SaveAndResetGameData()
         {
             _gameWordBuilder.ClearWord();
+            if (!_isLevelCompleted)
+            {
+                SaveLevelProgress();
+            }
+
+            Unsubscribe();
+        }
+
+        private void SaveLevelProgress(bool isCompleted = false)
+        {
             float time = _elapsedTime + _clockService.StopStopwatch(ClockConstants.GAME_TIMER);
-            var levelProgressData = new LevelProgressData(_levelWord, _unlockedWords, _hintManager.WordsWithHint, time);
+            var levelProgressData =
+                new LevelProgressData(_levelWord, _unlockedWords, _hintManager.WordsWithHint, time, isCompleted);
+
             _gameDataManager.UpdateLevelsProgressData(levelProgressData);
             _gameMenuScreen.ActivatePressedButtons();
-            Unsubscribe();
+        }
+
+        private void LevelCompleted()
+        {
+            SaveLevelProgress(true);
+            OnLevelCompleted?.Invoke();
         }
 
         private void Subscribe()
         {
+            _gameWordBuilder.OnAllWordsUnlocked += LevelCompleted;
             _gameMenuScreen.OnExit += SaveAndResetGameData;
             _gameWordBuilder.Subscribe();
             _hintManager.Subscribe();
@@ -96,6 +120,7 @@ namespace Game.GamePlay
 
         private void Unsubscribe()
         {
+            _gameWordBuilder.OnAllWordsUnlocked -= LevelCompleted;
             _gameMenuScreen.OnExit -= SaveAndResetGameData;
             _gameWordBuilder.Unsubscribe();
             _hintManager.Unsubscribe();

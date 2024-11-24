@@ -1,11 +1,10 @@
-using Game;
 using Game.Data;
 using Services.Currencies;
 using UI.Core.Data;
 using UnityEngine;
 using Zenject;
 
-namespace Installers
+namespace Installers.Mono
 {
     public class ScriptableObjectInstaller : MonoInstaller
     {

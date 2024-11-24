@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Game.Data;
 using Services.Clock;
 using Services.Currencies;
@@ -15,6 +16,8 @@ namespace Game.GamePlay
         private readonly List<GameWord> _levelWords;
         private readonly List<string> _unlockedWords;
         private readonly CurrencyService _currencyService;
+
+        public event Action OnAllWordsUnlocked; 
 
         public GameWordBuilder(CurrencyService currencyService, IClockService clockService,
             GameDataManager gameDataManager, GameMenuScreen gameMenuScreen, List<string> unlockedWords,
@@ -63,6 +66,10 @@ namespace Game.GamePlay
 
             _currencyService.GetCurrencyByType(CurrencyType.Coin)
                 .EarnCurrency(_gameDataManager.GamePlayConfig.CoinCountForUnlockedWord);
+            if (_unlockedWords.Count >= _levelWords.Count)
+            {
+                OnAllWordsUnlocked?.Invoke();
+            }
         }
 
         private void AddSign(char sign)

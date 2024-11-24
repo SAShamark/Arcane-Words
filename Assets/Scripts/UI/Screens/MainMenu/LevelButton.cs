@@ -49,6 +49,7 @@ namespace UI.Screens.MainMenu
             {
                 _progressImage.gameObject.SetActive(true);
                 _progressText.gameObject.SetActive(false);
+                _progressImage.sprite = progressSprite;
                 return;
             }
 

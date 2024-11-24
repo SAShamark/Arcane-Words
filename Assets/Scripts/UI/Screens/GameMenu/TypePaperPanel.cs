@@ -54,6 +54,8 @@ namespace UI.Screens.GameMenu
 
         private void DrawWords()
         {
+            int siblingIndex = 0;
+
             foreach (GameWord levelWord in _levelWords)
             {
                 WordControl wordInstance = _objectPool.GetFreeElement();
@@ -70,6 +72,9 @@ namespace UI.Screens.GameMenu
 
                 wordInstance.OnShowHint += ShowHint;
                 WordInstances.Add(wordInstance);
+
+                wordInstance.transform.SetSiblingIndex(siblingIndex);
+                siblingIndex++;
             }
         }
 

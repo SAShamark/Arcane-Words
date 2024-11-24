@@ -1,4 +1,3 @@
-using Installers;
 using Services.Currencies;
 using TMPro;
 using UnityEngine;

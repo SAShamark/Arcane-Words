@@ -47,7 +47,7 @@ namespace Game.Data
         {
             foreach (string level in _levelsData.Levels.Where(level => !LevelsProgressData.ContainsKey(level)))
             {
-                var levelProgressData = new LevelProgressData(level, new List<string>(), new List<string>(), 0);
+                var levelProgressData = new LevelProgressData(level, new List<string>(), new List<string>());
                 LevelsProgressData[level] = levelProgressData;
             }
 

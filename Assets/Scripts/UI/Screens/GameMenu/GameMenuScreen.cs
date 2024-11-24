@@ -35,6 +35,7 @@ namespace UI.Screens.GameMenu
 
         private IClockService _clockService;
         private float _elapsedTime;
+        private bool _levelCompleted;
         private List<GameWord> _levelWords;
         private List<string> _wordsWithHint;
         public List<WordControl> WordInstances => _typePaperPanel.WordInstances;
@@ -64,17 +65,24 @@ namespace UI.Screens.GameMenu
 
         private void Update()
         {
-            UpdateStopwatch();
+            if (!_levelCompleted)
+            {
+                UpdateStopwatch();
+            }
         }
 
         public void Init(string header, List<GameWord> levelWords, List<string> unlockedWords,
-            List<string> wordsWithHint, float elapsedTime, int hintCount)
+            List<string> wordsWithHint, float elapsedTime, int hintCount, bool levelCompleted)
         {
+            _typePaperPanel.ClearWords();
+            
+            _levelCompleted = levelCompleted;
             _elapsedTime = elapsedTime;
             _levelWords = levelWords;
             _wordsWithHint = wordsWithHint;
-
             _headerText.text = header;
+            
+            _stopwatchText.text = _clockService.FormatToTime(_elapsedTime);
             _hintCountText.text = hintCount.ToString();
 
             _typePaperPanel.Init(_levelWords, _wordsWithHint, unlockedWords);
@@ -124,7 +132,7 @@ namespace UI.Screens.GameMenu
         }
 
         public void ChangeHintButtonActivity(bool isActive) => _hintButton.interactable = isActive;
-        
+
         private void AddSign(char sign) => OnAddSign?.Invoke(sign);
 
         private void EraseSign() => OnEraseSign?.Invoke();
@@ -132,11 +140,12 @@ namespace UI.Screens.GameMenu
         private void ClearWord() => OnClearWord?.Invoke();
 
         private void HandleHint() => OnHintRequested?.Invoke();
-        
+
         private void HandleHint(string word, bool isUnlocked) => OnHintProcessed?.Invoke(word, isUnlocked);
 
         private void HandleExit() => OnExit?.Invoke();
 
-        public void ScrollToWord(WordControl unlockedWord, bool wordInstanceIsUnlocked) => _typePaperPanel.ScrollToWord(unlockedWord, wordInstanceIsUnlocked);
+        public void ScrollToWord(WordControl unlockedWord, bool wordInstanceIsUnlocked) =>
+            _typePaperPanel.ScrollToWord(unlockedWord, wordInstanceIsUnlocked);
     }
 }
