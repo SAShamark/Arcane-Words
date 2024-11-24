@@ -17,6 +17,7 @@ namespace UI.Screens.Core
                 _backButton.onClick.RemoveAllListeners();
 
                 _backButton.onClick.AddListener(UIManager.ScreensManager.ShowPreviousScreen);
+                _backButton.onClick.AddListener(ButtonClicked);
             }
         }
 

@@ -40,6 +40,7 @@ namespace UI.Screens.MainMenu
 
         public void UpdateVisual(bool isUnlocked, bool isCompleted, int progress, Sprite progressSprite)
         {
+            _button.interactable = isUnlocked;
             _lockedLevel.SetActive(!isUnlocked);
             _unlockedLevel.SetActive(isUnlocked);
             _progressText.text = $"{progress}%";

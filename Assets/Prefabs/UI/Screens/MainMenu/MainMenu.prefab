@@ -222,6 +222,7 @@ GameObject:
   - component: {fileID: 2092877340287054167}
   - component: {fileID: 2092877340287054161}
   - component: {fileID: 2092877340287054166}
+  - component: {fileID: 7856846639931896932}
   m_Layer: 5
   m_Name: Header
   m_TagString: Untagged
@@ -288,6 +289,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7856846639931896932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092877340287054164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 2
+  m_AspectRatio: 5.818182
 --- !u!1 &2092877340642533226
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +512,7 @@ GameObject:
   - component: {fileID: 2092877341358462587}
   - component: {fileID: 2092877341358462581}
   - component: {fileID: 2092877341358462586}
+  - component: {fileID: 3377010886586007596}
   m_Layer: 5
   m_Name: LevelsPanel
   m_TagString: Untagged
@@ -563,6 +579,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3377010886586007596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092877341358462584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 2
+  m_AspectRatio: 0.53156143
 --- !u!1001 &3911561874297896868
 PrefabInstance:
   m_ObjectHideFlags: 0

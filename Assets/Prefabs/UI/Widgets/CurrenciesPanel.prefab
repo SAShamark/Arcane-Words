@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3117559764686371374}
   - component: {fileID: 1327067060517138134}
+  - component: {fileID: 4664279478947426507}
   m_Layer: 5
   m_Name: CurrenciesPanel
   m_TagString: Untagged
@@ -54,6 +55,20 @@ MonoBehaviour:
   _text: {fileID: 3117559764780913622}
   _image: {fileID: 3117559765680590451}
   _format: '{0}'
+--- !u!114 &4664279478947426507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3117559764686371375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 2
+  m_AspectRatio: 1.6502732
 --- !u!1 &3117559764780913620
 GameObject:
   m_ObjectHideFlags: 0

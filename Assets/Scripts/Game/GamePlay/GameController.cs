@@ -24,7 +24,6 @@ namespace Game.GamePlay
         private readonly CurrencyService _currencyService;
         private readonly IUIManager _uiManager;
 
-
         public GameController(IClockService clockService, CurrencyService currencyService, IUIManager uiManager)
         {
             _clockService = clockService;
@@ -101,7 +100,6 @@ namespace Game.GamePlay
             _gameWordBuilder.Unsubscribe();
             _hintManager.Unsubscribe();
         }
-
 
         public void Dispose()
         {

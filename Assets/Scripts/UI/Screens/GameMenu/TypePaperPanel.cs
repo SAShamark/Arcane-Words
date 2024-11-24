@@ -26,7 +26,6 @@ namespace UI.Screens.GameMenu
         public List<WordControl> WordInstances { get; private set; } = new();
         public event Action<string, bool> OnShowHint;
 
-
         private void Awake()
         {
             _objectPool = new ObjectPool<WordControl>(_wordPrefab, 5, _typePaperContent);
@@ -74,9 +73,7 @@ namespace UI.Screens.GameMenu
             }
         }
 
-
         private void ShowHint(string word, bool isUnlocked) => OnShowHint?.Invoke(word, isUnlocked);
-
 
         public void ClearWords()
         {
@@ -84,18 +81,23 @@ namespace UI.Screens.GameMenu
             {
                 _objectPool.TurnOffObject(word);
             }
+
             Unsubscribe();
             WordInstances.Clear();
         }
 
-        public void ScrollToWord(WordControl targetWord)
+        public void ScrollToWord(WordControl targetWord, bool wordInstanceIsUnlocked)
         {
             if (WordInstances.Contains(targetWord))
             {
                 int index = WordInstances.IndexOf(targetWord);
                 float targetNormalizedPosition = 1f - (float)index / (WordInstances.Count - 1);
 
-                _scrollRect.DOVerticalNormalizedPos(targetNormalizedPosition, 0.5f).SetEase(Ease.InOutQuad);
+                _scrollRect.DOVerticalNormalizedPos(targetNormalizedPosition, 0.5f).SetEase(Ease.InOutQuad)
+                    .OnComplete(() =>
+                    {
+                        targetWord.AnimateText(wordInstanceIsUnlocked ? targetWord.UnlockedColor : targetWord.LockedColor);
+                    });
             }
             else
             {

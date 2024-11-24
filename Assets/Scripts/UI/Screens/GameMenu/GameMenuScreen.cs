@@ -22,10 +22,10 @@ namespace UI.Screens.GameMenu
         private TMP_Text _hintCountText;
 
         [SerializeField]
-        private Button _hintButton;
+        private TMP_Text _stopwatchText;
 
         [SerializeField]
-        private TMP_Text _stopwatchText;
+        private Button _hintButton;
 
         [SerializeField]
         private TypePaperPanel _typePaperPanel;
@@ -78,7 +78,7 @@ namespace UI.Screens.GameMenu
             _hintCountText.text = hintCount.ToString();
 
             _typePaperPanel.Init(_levelWords, _wordsWithHint, unlockedWords);
-            _typeWriterPanel.Init(header);
+            _typeWriterPanel.Init(header, AudioManager);
         }
 
         public void UpdateWrittenText(string written) => _typeWriterPanel.UpdateWrittenText(written);
@@ -87,7 +87,6 @@ namespace UI.Screens.GameMenu
             _wordsCountText.text = $"{showedCount}/{_levelWords.Count}";
 
         public void ActivatePressedButtons() => _typeWriterPanel.ActivatePressedButtons();
-
 
         public override void Hide()
         {
@@ -125,6 +124,7 @@ namespace UI.Screens.GameMenu
         }
 
         public void ChangeHintButtonActivity(bool isActive) => _hintButton.interactable = isActive;
+        
         private void AddSign(char sign) => OnAddSign?.Invoke(sign);
 
         private void EraseSign() => OnEraseSign?.Invoke();
@@ -132,10 +132,11 @@ namespace UI.Screens.GameMenu
         private void ClearWord() => OnClearWord?.Invoke();
 
         private void HandleHint() => OnHintRequested?.Invoke();
+        
         private void HandleHint(string word, bool isUnlocked) => OnHintProcessed?.Invoke(word, isUnlocked);
 
         private void HandleExit() => OnExit?.Invoke();
 
-        public void UnlockWord(WordControl unlockedWord) => _typePaperPanel.ScrollToWord(unlockedWord);
+        public void ScrollToWord(WordControl unlockedWord, bool wordInstanceIsUnlocked) => _typePaperPanel.ScrollToWord(unlockedWord, wordInstanceIsUnlocked);
     }
 }

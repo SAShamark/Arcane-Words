@@ -13,8 +13,14 @@ namespace UI.Screens.GameMenu
         [SerializeField]
         private Button _button;
 
-        public Button Button => _button;
+        [SerializeField]
+        private Animator _animator;
 
+        [SerializeField]
+        private bool isTriggerAnimator;
+
+        private readonly int _isPressedHash = Animator.StringToHash("IsPressed");
+        public Button Button => _button;
         public char Sign { get; private set; }
 
         public event Action<KeyButton> OnButtonClicked;
@@ -38,9 +44,31 @@ namespace UI.Screens.GameMenu
             }
         }
 
+        public void ResetIsPressed()
+        {
+            SetIsPressed(false);
+        }
+
         private void ButtonClicked()
         {
+            SetIsPressed(true);
             OnButtonClicked?.Invoke(this);
+        }
+
+        private void SetIsPressed(bool value)
+        {
+            if (_animator != null)
+            {
+                _keyText.gameObject.SetActive(!value);
+                if (isTriggerAnimator)
+                {
+                    _animator.SetTrigger(_isPressedHash);
+                }
+                else
+                {
+                    _animator.SetBool(_isPressedHash, value);
+                }
+            }
         }
     }
 }

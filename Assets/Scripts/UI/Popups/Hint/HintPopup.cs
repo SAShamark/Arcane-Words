@@ -65,6 +65,12 @@ namespace UI.Popups.Hint
             Draw();
         }
 
+        public override void CloseTrigger()
+        {
+            base.CloseTrigger();
+            _acceptButton.onClick.AddListener(Accept);
+        }
+
         private void Draw()
         {
             _headerText.text = _isWordUnlocked ? _word : new string('+', _word.Length);

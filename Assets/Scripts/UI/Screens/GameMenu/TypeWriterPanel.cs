@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Audio;
+using Audio.Data;
 using TMPro;
 using UnityEngine;
 
@@ -21,6 +23,7 @@ namespace UI.Screens.GameMenu
         private TMP_Text _writtenText;
 
         private readonly List<KeyButton> _pressedButtons = new();
+        private IAudioManager _audioManager;
         public event Action<char> OnAddSign;
         public event Action OnEraseSign;
         public event Action OnClearWord;
@@ -35,8 +38,9 @@ namespace UI.Screens.GameMenu
             Unsubscribe();
         }
 
-        public void Init(string header)
+        public void Init(string header, IAudioManager audioManager)
         {
+            _audioManager = audioManager;
             _writtenText.text = string.Empty;
 
             InitButtons(header);
@@ -64,6 +68,8 @@ namespace UI.Screens.GameMenu
             foreach (KeyButton button in _pressedButtons)
             {
                 button.Button.interactable = true;
+                button.ResetIsPressed();
+                _audioManager.Play(AudioGroupType.UiSounds, "UnpressKey");
             }
 
             _pressedButtons.Clear();
@@ -73,9 +79,11 @@ namespace UI.Screens.GameMenu
         {
             if (_pressedButtons.Count > 0)
             {
-                KeyButton keyButton = _pressedButtons.Last();
-                keyButton.Button.interactable = true;
-                _pressedButtons.Remove(keyButton);
+                KeyButton button = _pressedButtons.Last();
+                button.Button.interactable = true;
+                button.ResetIsPressed();
+                _audioManager.Play(AudioGroupType.UiSounds, "UnpressKey");
+                _pressedButtons.Remove(button);
             }
         }
 
@@ -86,8 +94,8 @@ namespace UI.Screens.GameMenu
                 button.OnButtonClicked += SignButtonClicked;
             }
 
-            _eraseKeyButton.OnButtonClicked += EraseSign;
-            _clearKeyButton.OnButtonClicked += ClearWord;
+            _eraseKeyButton.OnButtonClicked += EraseSignButtonClicked;
+            _clearKeyButton.OnButtonClicked += ClearWordButtonClicked;
         }
 
         private void Unsubscribe()
@@ -97,25 +105,28 @@ namespace UI.Screens.GameMenu
                 button.OnButtonClicked -= SignButtonClicked;
             }
 
-            _eraseKeyButton.OnButtonClicked -= EraseSign;
-            _clearKeyButton.OnButtonClicked -= ClearWord;
+            _eraseKeyButton.OnButtonClicked -= EraseSignButtonClicked;
+            _clearKeyButton.OnButtonClicked -= ClearWordButtonClicked;
         }
 
         private void SignButtonClicked(KeyButton button)
         {
+            _audioManager.Play(AudioGroupType.UiSounds, "PressKey");
             button.Button.interactable = false;
             _pressedButtons.Add(button);
             OnAddSign?.Invoke(button.Sign);
         }
 
-        private void EraseSign(KeyButton button)
+        private void EraseSignButtonClicked(KeyButton button)
         {
+            _audioManager.Play(AudioGroupType.UiSounds, "PressKey");
             ActivateLastPressedButton();
             OnEraseSign?.Invoke();
         }
 
-        private void ClearWord(KeyButton button)
+        private void ClearWordButtonClicked(KeyButton button)
         {
+            _audioManager.Play(AudioGroupType.UiSounds, "PressKey");
             ActivatePressedButtons();
             OnClearWord?.Invoke();
         }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Audio;
+using Audio.Data;
+using UnityEngine;
 using Zenject;
 
 namespace UI.Core
@@ -9,11 +11,17 @@ namespace UI.Core
         protected Canvas _canvas;
 
         protected IUIManager UIManager { get; private set; }
+        protected IAudioManager AudioManager { get; private set; }
 
         [Inject]
-        private void Construct(IUIManager uiManager)
+        private void Construct(IUIManager uiManager, IAudioManager audioManager)
         {
             UIManager = uiManager;
+            AudioManager = audioManager;
+        }
+        protected void ButtonClicked()
+        {
+            AudioManager.Play(AudioGroupType.UiSounds, "Button");
         }
     }
 }

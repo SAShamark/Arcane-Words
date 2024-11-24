@@ -38,19 +38,31 @@ namespace Game.GamePlay
 
                 if (word.Word == _written && !wordInstance.IsUnlocked)
                 {
-                    _unlockedWords.Add(word.Word);
-                    wordInstance.UnlockWord();
-                    _gameMenuScreen.UnlockWord(wordInstance);
-                    _gameMenuScreen.UpdateShowedWordCount(_unlockedWords.Count);
-                    ClearWord();
-
-                    _currencyService.GetCurrencyByType(CurrencyType.Coin)
-                        .EarnCurrency(_gameDataManager.GamePlayConfig.CoinCountForUnlockedWord);
+                    UnlockWord(word, wordInstance);
                     return;
+                }
+
+                if (word.Word == _written && wordInstance.IsUnlocked)
+                {
+                    bool wordInstanceIsUnlocked = wordInstance.IsUnlocked;
+                    _gameMenuScreen.ScrollToWord(wordInstance, wordInstanceIsUnlocked);
                 }
             }
 
             ClearWord();
+        }
+
+        private void UnlockWord(GameWord word, WordControl wordInstance)
+        {
+            _unlockedWords.Add(word.Word);
+            bool wordInstanceIsUnlocked = wordInstance.IsUnlocked;
+            _gameMenuScreen.ScrollToWord(wordInstance, wordInstanceIsUnlocked);
+            wordInstance.UnlockWord();
+            _gameMenuScreen.UpdateShowedWordCount(_unlockedWords.Count);
+            ClearWord();
+
+            _currencyService.GetCurrencyByType(CurrencyType.Coin)
+                .EarnCurrency(_gameDataManager.GamePlayConfig.CoinCountForUnlockedWord);
         }
 
         private void AddSign(char sign)
