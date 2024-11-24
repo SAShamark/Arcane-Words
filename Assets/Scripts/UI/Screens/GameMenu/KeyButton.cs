@@ -19,6 +19,16 @@ namespace UI.Screens.GameMenu
 
         public event Action<KeyButton> OnButtonClicked;
 
+        private void Start()
+        {
+            _button.onClick.AddListener(ButtonClicked);
+        }
+
+        private void OnDestroy()
+        {
+            _button.onClick.RemoveListener(ButtonClicked);
+        }
+
         public void Init(char sign)
         {
             if (sign != '\0')
@@ -26,8 +36,6 @@ namespace UI.Screens.GameMenu
                 Sign = sign;
                 _keyText.text = sign.ToString();
             }
-
-            _button.onClick.AddListener(ButtonClicked);
         }
 
         private void ButtonClicked()

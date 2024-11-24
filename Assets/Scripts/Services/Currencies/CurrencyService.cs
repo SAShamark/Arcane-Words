@@ -31,6 +31,8 @@ namespace Services.Currencies
                 int initialCurrency = currencies.GetValueOrDefault(currencyType.ToString(), 0);
                 AddCurrencyBank(currencyType, initialCurrency);
             }
+
+            _storageService.SaveData(StorageConstants.CURRENCIES, currencies);
         }
 
         private void AddCurrencyBank(CurrencyType currencyType, int initialCurrency)

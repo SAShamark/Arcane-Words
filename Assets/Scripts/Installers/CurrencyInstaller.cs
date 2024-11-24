@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Game;
 using Game.Data;
 using Services.Currencies;
 using Services.Storage;
@@ -32,7 +31,8 @@ namespace Installers
             var currencyService = new CurrencyService(_storageService, _currencyCollection);
             var defaultValues = new Dictionary<string, int>
             {
-                { CurrencyType.Hint.ToString(), _gamePlayConfig.StartHintCount }
+                { CurrencyType.Coin.ToString(), 0},
+                { CurrencyType.Hint.ToString(), _gamePlayConfig.StartHintCount}
             };
             currencyService.Init(defaultValues);
             Container.Bind<CurrencyService>().FromInstance(currencyService).AsSingle();

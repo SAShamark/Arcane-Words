@@ -183,7 +183,7 @@ MonoBehaviour:
   _acceptButton: {fileID: 1701173277477444276}
   _acceptString: Ok
   _acceptTextColorWhenLocked: {r: 0.19607845, g: 0.39607847, b: 0.21960786, a: 1}
-  _acceptTextColorWhenUnlocked: {r: 1, g: 1, b: 1, a: 0}
+  _acceptTextColorWhenUnlocked: {r: 1, g: 1, b: 1, a: 1}
 --- !u!223 &-2526435433616170410
 Canvas:
   m_ObjectHideFlags: 0

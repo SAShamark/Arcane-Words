@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game;
 using Game.Data;
 using Services.Clock;
 using TMPro;
@@ -43,8 +42,9 @@ namespace UI.Screens.GameMenu
         public event Action<char> OnAddSign;
         public event Action OnEraseSign;
         public event Action OnClearWord;
+        public event Action OnHintRequested;
+        public event Action<string, bool> OnHintProcessed;
         public event Action OnExit;
-        public event Action OnHint;
 
         [Inject]
         private void Construct(IClockService clockService)
@@ -52,7 +52,7 @@ namespace UI.Screens.GameMenu
             _clockService = clockService;
         }
 
-        private void Awake()
+        private void Start()
         {
             Subscribe();
         }
@@ -73,16 +73,33 @@ namespace UI.Screens.GameMenu
             _elapsedTime = elapsedTime;
             _levelWords = levelWords;
             _wordsWithHint = wordsWithHint;
+
             _headerText.text = header;
             _hintCountText.text = hintCount.ToString();
-            _typePaperPanel.Init(_levelWords,_wordsWithHint, unlockedWords);
+
+            _typePaperPanel.Init(_levelWords, _wordsWithHint, unlockedWords);
+            _typePaperPanel.OnShowHint += HandleHint;
             _typeWriterPanel.Init(header);
+        }
+
+        public void UpdateWrittenText(string written) => _typeWriterPanel.UpdateWrittenText(written);
+
+        public void UpdateShowedWordCount(int showedCount) =>
+            _wordsCountText.text = $"{showedCount}/{_levelWords.Count}";
+
+        public void ActivatePressedButtons() => _typeWriterPanel.ActivatePressedButtons();
+
+
+        public override void Hide()
+        {
+            base.Hide();
+            _typePaperPanel.ClearWords();
         }
 
         private void Subscribe()
         {
-            _backButton.onClick.AddListener(() => OnExit?.Invoke());
-            _hintButton.onClick.AddListener(() => OnHint?.Invoke());
+            _backButton.onClick.AddListener(HandleExit);
+            _hintButton.onClick.AddListener(HandleHint);
 
             _typeWriterPanel.OnAddSign += AddSign;
             _typeWriterPanel.OnEraseSign += EraseSign;
@@ -91,27 +108,14 @@ namespace UI.Screens.GameMenu
 
         private void Unsubscribe()
         {
+            _backButton.onClick.RemoveListener(HandleExit);
+            _hintButton.onClick.RemoveListener(HandleHint);
+
             _typeWriterPanel.OnAddSign -= AddSign;
             _typeWriterPanel.OnEraseSign -= EraseSign;
             _typeWriterPanel.OnClearWord -= ClearWord;
             _typePaperPanel.Unsubscribe();
         }
-
-        public void UpdateWrittenText(string written) => _typeWriterPanel.UpdateWrittenText(written);
-        private void AddSign(char sign) => OnAddSign?.Invoke(sign);
-
-        private void EraseSign() => OnEraseSign?.Invoke();
-
-        private void ClearWord() => OnClearWord?.Invoke();
-
-        public void UnlockWord(WordControl unlockedWord)
-        {
-            _typePaperPanel.ScrollToWord(unlockedWord);
-        }
-
-        public void UpdateShowedWordCount(int showedCount) =>
-            _wordsCountText.text = $"{showedCount}/{_levelWords.Count}";
-
 
         private void UpdateStopwatch()
         {
@@ -119,12 +123,18 @@ namespace UI.Screens.GameMenu
             _stopwatchText.text = _clockService.FormatToTime(elapsedTime);
         }
 
-        public override void Hide()
-        {
-            base.Hide();
-            _typePaperPanel.ClearWords();
-        }
 
-        public void ActivatePressedButtons() => _typeWriterPanel.ActivatePressedButtons();
+        private void AddSign(char sign) => OnAddSign?.Invoke(sign);
+
+        private void EraseSign() => OnEraseSign?.Invoke();
+
+        private void ClearWord() => OnClearWord?.Invoke();
+
+        private void HandleHint() => OnHintRequested?.Invoke();
+        private void HandleHint(string word, bool isUnlocked) => OnHintProcessed?.Invoke(word, isUnlocked);
+
+        private void HandleExit() => OnExit?.Invoke();
+
+        public void UnlockWord(WordControl unlockedWord) => _typePaperPanel.ScrollToWord(unlockedWord);
     }
 }

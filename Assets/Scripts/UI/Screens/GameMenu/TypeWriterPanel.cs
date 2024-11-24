@@ -35,28 +35,6 @@ namespace UI.Screens.GameMenu
             Unsubscribe();
         }
 
-        private void Subscribe()
-        {
-            foreach (KeyButton button in _keyButtons)
-            {
-                button.OnButtonClicked += SignButtonClicked;
-            }
-
-            _eraseKeyButton.OnButtonClicked += EraseSign;
-            _clearKeyButton.OnButtonClicked += ClearWord;
-        }
-
-        private void Unsubscribe()
-        {
-            foreach (KeyButton button in _keyButtons)
-            {
-                button.OnButtonClicked -= SignButtonClicked;
-            }
-
-            _eraseKeyButton.OnButtonClicked -= EraseSign;
-            _clearKeyButton.OnButtonClicked -= ClearWord;
-        }
-
         public void Init(string header)
         {
             _writtenText.text = string.Empty;
@@ -91,28 +69,48 @@ namespace UI.Screens.GameMenu
             _pressedButtons.Clear();
         }
 
-        private void ActivatePressedButton()
+        private void ActivateLastPressedButton()
         {
-            KeyButton keyButton = _pressedButtons.Last();
-            keyButton.Button.interactable = true;
-            _pressedButtons.Remove(keyButton);
+            if (_pressedButtons.Count > 0)
+            {
+                KeyButton keyButton = _pressedButtons.Last();
+                keyButton.Button.interactable = true;
+                _pressedButtons.Remove(keyButton);
+            }
+        }
+
+        private void Subscribe()
+        {
+            foreach (KeyButton button in _keyButtons)
+            {
+                button.OnButtonClicked += SignButtonClicked;
+            }
+
+            _eraseKeyButton.OnButtonClicked += EraseSign;
+            _clearKeyButton.OnButtonClicked += ClearWord;
+        }
+
+        private void Unsubscribe()
+        {
+            foreach (KeyButton button in _keyButtons)
+            {
+                button.OnButtonClicked -= SignButtonClicked;
+            }
+
+            _eraseKeyButton.OnButtonClicked -= EraseSign;
+            _clearKeyButton.OnButtonClicked -= ClearWord;
         }
 
         private void SignButtonClicked(KeyButton button)
         {
             button.Button.interactable = false;
             _pressedButtons.Add(button);
-            AddSign(button.Sign);
-        }
-
-        private void AddSign(char sign)
-        {
-            OnAddSign?.Invoke(sign);
+            OnAddSign?.Invoke(button.Sign);
         }
 
         private void EraseSign(KeyButton button)
         {
-            ActivatePressedButton();
+            ActivateLastPressedButton();
             OnEraseSign?.Invoke();
         }
 

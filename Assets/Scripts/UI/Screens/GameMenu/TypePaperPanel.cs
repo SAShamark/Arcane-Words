@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
-using Game;
 using Game.Data;
 using Services.ObjectPooling;
 using UnityEngine;
@@ -24,6 +24,8 @@ namespace UI.Screens.GameMenu
         private List<string> _unlockedWords;
         private List<string> _wordsWithHint;
         public List<WordControl> WordInstances { get; private set; } = new();
+        public event Action<string, bool> OnShowHint;
+
 
         private void Awake()
         {
@@ -65,16 +67,16 @@ namespace UI.Screens.GameMenu
                 else if (_wordsWithHint.Contains(levelWord.Word))
                 {
                     wordInstance.UnlockHint();
-                    wordInstance.OnShowHint += ShowHint;
                 }
 
+                wordInstance.OnShowHint += ShowHint;
                 WordInstances.Add(wordInstance);
             }
         }
 
-        private void ShowHint(string word, bool isUnlocked)
-        {
-        }
+
+        private void ShowHint(string word, bool isUnlocked) => OnShowHint?.Invoke(word, isUnlocked);
+
 
         public void ClearWords()
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Game.Data;
 using Services.Clock;
 using Services.Currencies;
@@ -66,7 +65,7 @@ namespace Game
             }
         }
 
-        public void SaveAndResetGameData()
+        private void SaveAndResetGameData()
         {
             _written = string.Empty;
             float time = _elapsedTime + _clockService.StopStopwatch(ClockConstants.GAME_TIMER);
@@ -81,7 +80,9 @@ namespace Game
             _gameMenuScreen.OnAddSign += AddSign;
             _gameMenuScreen.OnEraseSign += EraseSign;
             _gameMenuScreen.OnClearWord += ClearWord;
-            _gameMenuScreen.OnHint += HintClicked;
+            _gameMenuScreen.OnHintRequested += HintRequestedClicked;
+            _gameMenuScreen.OnHintProcessed += ShowHint;
+            _gameMenuScreen.OnExit += SaveAndResetGameData;
         }
 
         private void Unsubscribe()
@@ -89,7 +90,10 @@ namespace Game
             _gameMenuScreen.OnAddSign -= AddSign;
             _gameMenuScreen.OnEraseSign -= EraseSign;
             _gameMenuScreen.OnClearWord -= ClearWord;
-            _gameMenuScreen.OnHint -= HintClicked;
+            _gameMenuScreen.OnHintRequested -= HintRequestedClicked;
+            _gameMenuScreen.OnHintProcessed -= ShowHint;
+            _gameMenuScreen.OnExit -= SaveAndResetGameData;
+
             if (_hintPopup != null)
             {
                 _hintPopup.OnHintUsed -= HintUsed;
@@ -101,7 +105,7 @@ namespace Game
             }
         }
 
-        private void HintClicked()
+        private void HintRequestedClicked()
         {
             _uiManager.PopupsManager.ShowPopup(PopupType.Hint);
             _hintPopup = _uiManager.PopupsManager.GetPopup(PopupType.Hint) as HintPopup;

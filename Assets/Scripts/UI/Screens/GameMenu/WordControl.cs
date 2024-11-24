@@ -20,22 +20,25 @@ namespace UI.Screens.GameMenu
         public event Action<IPoolable> OnReturnToPool;
         public event Action<string, bool> OnShowHint;
 
+        private void Start()
+        {
+            _button.onClick.AddListener(HandleShowHint);
+        }
+
+        private void OnDestroy()
+        {
+            _button.onClick.RemoveListener(HandleShowHint);
+        }
+
         public void Init(string word)
         {
             GameObject = gameObject;
             Word = word;
 
-            _button.onClick.AddListener(() => OnShowHint?.Invoke(Word, IsUnlocked));
+
             DrawLockedWord();
         }
-
-        private void DrawLockedWord()
-        {
-            _text.text = new string('-', Word.Length);
-            IsUnlocked = false;
-            _button.interactable = false;
-        }
-
+        
         public void UnlockHint()
         {
             _text.text = new string('+', Word.Length);
@@ -54,5 +57,14 @@ namespace UI.Screens.GameMenu
             _text.text = "";
             IsUnlocked = false;
         }
+
+        private void DrawLockedWord()
+        {
+            _text.text = new string('-', Word.Length);
+            IsUnlocked = false;
+            _button.interactable = false;
+        }
+
+        private void HandleShowHint() => OnShowHint?.Invoke(Word, IsUnlocked);
     }
 }
