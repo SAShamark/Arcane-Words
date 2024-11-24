@@ -28,7 +28,7 @@ MonoBehaviour:
       _loop: 0
     - _clip: {fileID: 8300000, guid: f3bb86fb5dd918046b9d73b8496acc98, type: 3}
       _id: UnpressKey
-      _volume: 1
+      _volume: 0.6
       _loop: 0
   - _groupType: 1
     _audioMixerGroup: {fileID: 5212259730022435458, guid: 65cf7de3d8330a743a4323adc7d8c188, type: 2}
