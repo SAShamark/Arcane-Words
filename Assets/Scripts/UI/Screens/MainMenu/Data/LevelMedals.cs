@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UI.Core.Data
+namespace UI.Screens.MainMenu.Data
 {
     [Serializable]
     public class LevelMedals

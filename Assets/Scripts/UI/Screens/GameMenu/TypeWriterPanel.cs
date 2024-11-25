@@ -22,8 +22,9 @@ namespace UI.Screens.GameMenu
         [SerializeField]
         private TMP_Text _writtenText;
 
-        private readonly List<KeyButton> _pressedButtons = new();
         private IAudioManager _audioManager;
+
+        private readonly List<KeyButton> _pressedButtons = new();
         public event Action<char> OnAddSign;
         public event Action OnEraseSign;
         public event Action OnClearWord;
@@ -69,7 +70,7 @@ namespace UI.Screens.GameMenu
             {
                 button.Button.interactable = true;
                 button.ResetIsPressed();
-                _audioManager.Play(AudioGroupType.UiSounds, "UnpressKey");
+                _audioManager.Play(AudioGroupType.UiSounds, SoundConstants.UNPRESS_KEY);
             }
 
             _pressedButtons.Clear();
@@ -82,7 +83,7 @@ namespace UI.Screens.GameMenu
                 KeyButton button = _pressedButtons.Last();
                 button.Button.interactable = true;
                 button.ResetIsPressed();
-                _audioManager.Play(AudioGroupType.UiSounds, "UnpressKey");
+                _audioManager.Play(AudioGroupType.UiSounds, SoundConstants.UNPRESS_KEY);
                 _pressedButtons.Remove(button);
             }
         }
@@ -111,7 +112,7 @@ namespace UI.Screens.GameMenu
 
         private void SignButtonClicked(KeyButton button)
         {
-            _audioManager.Play(AudioGroupType.UiSounds, "PressKey");
+            _audioManager.Play(AudioGroupType.UiSounds, SoundConstants.PRESS_KEY);
             button.Button.interactable = false;
             _pressedButtons.Add(button);
             OnAddSign?.Invoke(button.Sign);
@@ -119,14 +120,14 @@ namespace UI.Screens.GameMenu
 
         private void EraseSignButtonClicked(KeyButton button)
         {
-            _audioManager.Play(AudioGroupType.UiSounds, "PressKey");
+            _audioManager.Play(AudioGroupType.UiSounds, SoundConstants.PRESS_KEY);
             ActivateLastPressedButton();
             OnEraseSign?.Invoke();
         }
 
         private void ClearWordButtonClicked(KeyButton button)
         {
-            _audioManager.Play(AudioGroupType.UiSounds, "PressKey");
+            _audioManager.Play(AudioGroupType.UiSounds, SoundConstants.PRESS_KEY);
             ActivatePressedButtons();
             OnClearWord?.Invoke();
         }

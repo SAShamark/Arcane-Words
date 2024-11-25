@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.Data;
 using UI.Core.Data;
 using UI.Screens.Core;
+using UI.Screens.MainMenu.Data;
 using UnityEngine;
 
 namespace UI.Screens.MainMenu

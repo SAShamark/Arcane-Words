@@ -21,7 +21,7 @@ namespace UI.Core
         }
         protected void ButtonClicked()
         {
-            AudioManager.Play(AudioGroupType.UiSounds, "Button");
+            AudioManager.Play(AudioGroupType.UiSounds, SoundConstants.BUTTON);
         }
     }
 }

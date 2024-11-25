@@ -75,26 +75,19 @@ namespace UI.Screens.GameMenu
             List<string> wordsWithHint, float elapsedTime, int hintCount, bool levelCompleted)
         {
             _typePaperPanel.ClearWords();
-            
+
             _levelCompleted = levelCompleted;
             _elapsedTime = elapsedTime;
             _levelWords = levelWords;
             _wordsWithHint = wordsWithHint;
             _headerText.text = header;
-            
+
             _stopwatchText.text = _clockService.FormatToTime(_elapsedTime);
             _hintCountText.text = hintCount.ToString();
 
             _typePaperPanel.Init(_levelWords, _wordsWithHint, unlockedWords);
             _typeWriterPanel.Init(header, AudioManager);
         }
-
-        public void UpdateWrittenText(string written) => _typeWriterPanel.UpdateWrittenText(written);
-
-        public void UpdateShowedWordCount(int showedCount) =>
-            _wordsCountText.text = $"{showedCount}/{_levelWords.Count}";
-
-        public void ActivatePressedButtons() => _typeWriterPanel.ActivatePressedButtons();
 
         public override void Hide()
         {
@@ -130,6 +123,13 @@ namespace UI.Screens.GameMenu
             float elapsedTime = _elapsedTime + _clockService.CalculateElapsedTime(ClockConstants.GAME_TIMER);
             _stopwatchText.text = _clockService.FormatToTime(elapsedTime);
         }
+
+        public void UpdateWrittenText(string written) => _typeWriterPanel.UpdateWrittenText(written);
+
+        public void UpdateShowedWordCount(int showedCount) =>
+            _wordsCountText.text = $"{showedCount}/{_levelWords.Count}";
+
+        public void ActivatePressedButtons() => _typeWriterPanel.ActivatePressedButtons();
 
         public void ChangeHintButtonActivity(bool isActive) => _hintButton.interactable = isActive;
 

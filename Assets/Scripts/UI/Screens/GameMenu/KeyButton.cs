@@ -17,7 +17,7 @@ namespace UI.Screens.GameMenu
         private Animator _animator;
 
         [SerializeField]
-        private bool isTriggerAnimator;
+        private bool _isTriggerAnimator;
 
         private readonly int _isPressedHash = Animator.StringToHash("IsPressed");
         public Button Button => _button;
@@ -60,7 +60,7 @@ namespace UI.Screens.GameMenu
             if (_animator != null)
             {
                 _keyText.gameObject.SetActive(!value);
-                if (isTriggerAnimator)
+                if (_isTriggerAnimator)
                 {
                     _animator.SetTrigger(_isPressedHash);
                 }

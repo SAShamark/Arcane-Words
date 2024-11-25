@@ -6,6 +6,7 @@ using UI.Core;
 using UI.Core.Data;
 using UI.Screens.Core;
 using UI.Screens.MainMenu;
+using UI.Screens.MainMenu.Data;
 using UnityEngine;
 using Zenject;
 
@@ -40,8 +41,7 @@ namespace Game
         {
             InitializeGameDataService();
             InitializeMainMenu();
-
-            _gameLauncher = new GameLauncher(_uiManager, _clockService, _gameDataManager,_currencyService);
+            InitializeGameLauncher();
         }
 
         private void OnDestroy()
@@ -63,9 +63,14 @@ namespace Game
 
         private void InitializeGameDataService()
         {
-            var gameDataService = new GameDataManager(_gamePlayConfig, _levelsConfig, _storageService);
-            gameDataService.Initialize();
-            _gameDataManager = gameDataService;
+            _gameDataManager = new GameDataManager(_gamePlayConfig, _levelsConfig, _storageService);
+            _gameDataManager.Initialize();
+        }
+
+        private void InitializeGameLauncher()
+        {
+            _gameLauncher = new GameLauncher(_uiManager, _clockService, _gameDataManager, _currencyService);
+            _gameLauncher.Initialize();
         }
 
         private void LevelButtonClicked(int index)

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Services.Storage;
 using UI.Core.Data;
+using UI.Screens.MainMenu.Data;
 using UnityEngine;
 
 namespace Game.Data

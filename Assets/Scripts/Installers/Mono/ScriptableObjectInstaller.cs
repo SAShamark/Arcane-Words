@@ -1,6 +1,7 @@
 using Game.Data;
 using Services.Currencies;
 using UI.Core.Data;
+using UI.Screens.MainMenu.Data;
 using UnityEngine;
 using Zenject;
 

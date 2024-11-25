@@ -29,6 +29,11 @@ namespace Game
             _currencyService = currencyService;
         }
 
+        public void Initialize()
+        {
+            _gameController = new GameController(_clockService, _currencyService, _uiManager);
+        }
+
         public void LaunchGame(int levelIndex)
         {
             InitializeGameMenu();
@@ -45,7 +50,6 @@ namespace Game
         private void StartLevel()
         {
             string level = _gameDataManager.Levels[_currentLevelIndex];
-            _gameController = new GameController(_clockService, _currencyService, _uiManager);
             _gameController.StartGame(_gameMenu, _gameDataManager, level);
             _gameController.OnLevelCompleted += StartNextLevel;
         }

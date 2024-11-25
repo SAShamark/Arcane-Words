@@ -2,9 +2,9 @@ namespace Audio.Data
 {
     public enum AudioMixerGroups
     {
-        Master,
-        Music,
-        Sounds,
-        UI
+        Master = 0,
+        Music = 1,
+        Sounds = 2,
+        UI = 3
     }
 }
