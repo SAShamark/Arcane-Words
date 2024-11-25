@@ -58,7 +58,7 @@ namespace Game.GamePlay
         private void InitHintManager(LevelProgressData levelProgressData)
         {
             _hintManager = new HintManager(_uiManager, _gameDataManager, _gameMenuScreen.WordInstances, _levelWords,
-                _unlockedWords, _gameMenuScreen)
+                _unlockedWords, _gameMenuScreen, levelProgressData.IsLevelCompleted)
             {
                 WordsWithHint = levelProgressData.WordsWithHint
             };
@@ -106,6 +106,7 @@ namespace Game.GamePlay
 
         private void LevelCompleted()
         {
+            Unsubscribe();
             SaveLevelProgress(true);
             OnLevelCompleted?.Invoke();
         }
@@ -120,10 +121,14 @@ namespace Game.GamePlay
 
         private void Unsubscribe()
         {
-            _gameWordBuilder.OnAllWordsUnlocked -= LevelCompleted;
-            _gameMenuScreen.OnExit -= SaveAndResetGameData;
-            _gameWordBuilder.Unsubscribe();
-            _hintManager.Unsubscribe();
+            if (_gameWordBuilder != null)
+            {
+                _gameWordBuilder.OnAllWordsUnlocked -= LevelCompleted;
+                _gameMenuScreen.OnExit -= SaveAndResetGameData;
+                _gameWordBuilder.Unsubscribe();
+            }
+
+            _hintManager?.Unsubscribe();
         }
 
         public void Dispose()

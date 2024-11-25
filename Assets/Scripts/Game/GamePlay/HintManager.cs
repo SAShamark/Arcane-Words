@@ -17,9 +17,10 @@ namespace Game.GamePlay
         private readonly List<WordControl> _wordInstances;
         private HintPopup _hintPopup;
         public List<string> WordsWithHint { get; internal set; }
+        private readonly bool _isLevelCompleted;
 
         public HintManager(IUIManager uiManager, GameDataManager gameDataManager, List<WordControl> wordInstances,
-            List<GameWord> levelWords, List<string> unlockedWords, GameMenuScreen gameMenuScreen)
+            List<GameWord> levelWords, List<string> unlockedWords, GameMenuScreen gameMenuScreen, bool isLevelCompleted)
         {
             _uiManager = uiManager;
             _gameDataManager = gameDataManager;
@@ -27,6 +28,7 @@ namespace Game.GamePlay
             _levelWords = levelWords;
             _unlockedWords = unlockedWords;
             _wordInstances = wordInstances;
+            _isLevelCompleted = isLevelCompleted;
         }
 
         internal void UpdateHintButtonActivity()
@@ -35,17 +37,19 @@ namespace Game.GamePlay
             _gameMenuScreen.ChangeHintButtonActivity(!areAllHintsUsed);
         }
 
-
         private void RequestHint()
         {
-            _uiManager.PopupsManager.ShowPopup(PopupType.Hint);
-            _hintPopup = _uiManager.PopupsManager.GetPopup(PopupType.Hint) as HintPopup;
-            GameWord wordToHint = GetHint();
-            if (wordToHint != null && _hintPopup != null)
+            if (!_isLevelCompleted)
             {
-                _hintPopup.Initialize(wordToHint.Word, wordToHint.Description, false, false,
-                    _gameDataManager.GamePlayConfig.HintCost);
-                _hintPopup.OnHintUsed += HintUsed;
+                _uiManager.PopupsManager.ShowPopup(PopupType.Hint);
+                _hintPopup = _uiManager.PopupsManager.GetPopup(PopupType.Hint) as HintPopup;
+                GameWord wordToHint = GetHint();
+                if (wordToHint != null && _hintPopup != null)
+                {
+                    _hintPopup.Initialize(wordToHint.Word, wordToHint.Description, false, false,
+                        _gameDataManager.GamePlayConfig.HintCost);
+                    _hintPopup.OnHintUsed += HintUsed;
+                }
             }
         }
 
